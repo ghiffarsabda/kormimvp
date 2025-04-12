@@ -62,7 +62,8 @@ const NewsDetails = () => {
   
   if (!newsItem) return null;
   
-  const formattedDate = format(new Date(newsItem.date), "dd MMMM yyyy", { locale: id });
+  // Ensure the date is properly formatted or use a fallback date
+  const formattedDate = newsItem.date ? format(new Date(newsItem.date), "dd MMMM yyyy", { locale: id }) : "Tanggal tidak tersedia";
   
   const categoryColorMap: Record<string, string> = {
     "Event": "primary",

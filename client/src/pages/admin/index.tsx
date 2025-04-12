@@ -6,13 +6,21 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Organization, News, Event, GalleryItem } from "@shared/schema";
 import { Edit, Trash, Plus, Search } from "lucide-react";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
+import { useAdminAuth } from "@/hooks/use-auth-admin";
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState("overview");
+  const { logout } = useAdminAuth();
+  const [, navigate] = useLocation();
   
   const handleTabChange = (value: string) => {
     setActiveTab(value);
+  };
+  
+  const handleLogout = () => {
+    logout();
+    navigate("/admin/login");
   };
 
   const { data: organizations } = useQuery({
@@ -45,7 +53,17 @@ const AdminDashboard = () => {
                 Lihat Website
               </a>
             </Link>
-            <span className="text-white">Admin</span>
+            <div className="flex items-center gap-2">
+              <span className="text-white">Admin</span>
+              <Button 
+                variant="outline" 
+                size="sm"
+                className="border-white text-white hover:bg-white hover:text-[#2E8B57]"
+                onClick={handleLogout}
+              >
+                Logout
+              </Button>
+            </div>
           </div>
         </div>
       </div>
