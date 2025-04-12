@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, MapPin, Calendar, Phone } from "lucide-react";
 import { Organization, SportCategory } from "@shared/schema";
 import { Bicycle, Running, SpaIcon, Hiking, TableTennisIcon, SwimmerIcon } from "@/lib/icons";
+import { Link } from "wouter";
 
 interface SportsCardProps {
   organization: Organization;
@@ -60,18 +61,22 @@ const SportsCard = ({ organization, categories }: SportsCardProps) => {
         </div>
         
         <div className="flex justify-between">
-          <Button 
-            variant="link" 
-            className="p-0 font-poppins text-sm text-[#4A90E2] hover:text-[#3a77c2] transition-colors inline-flex items-center h-auto"
-          >
-            Detail <ArrowRight className="ml-1 h-4 w-4" />
-          </Button>
-          <Button 
-            variant="outline" 
-            className="font-poppins text-sm bg-[#2E8B57]/10 text-[#2E8B57] border-0 px-3 py-1 rounded-full hover:bg-[#2E8B57]/20 transition-colors h-auto"
-          >
-            Gabung
-          </Button>
+          <Link href={`/sports/${organization.id}`}>
+            <Button 
+              variant="link" 
+              className="p-0 font-poppins text-sm text-[#4A90E2] hover:text-[#3a77c2] transition-colors inline-flex items-center h-auto"
+            >
+              Detail <ArrowRight className="ml-1 h-4 w-4" />
+            </Button>
+          </Link>
+          <Link href="/join">
+            <Button 
+              variant="outline" 
+              className="font-poppins text-sm bg-[#2E8B57]/10 text-[#2E8B57] border-0 px-3 py-1 rounded-full hover:bg-[#2E8B57]/20 transition-colors h-auto"
+            >
+              Gabung
+            </Button>
+          </Link>
         </div>
       </CardContent>
     </Card>

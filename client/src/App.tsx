@@ -16,6 +16,7 @@ import Contact from "@/pages/contact";
 import Join from "@/pages/join";
 import OrganizationDetails from "@/pages/organization-details";
 import NewsDetails from "@/pages/news-details";
+import AdminDashboard from "@/pages/admin";
 
 function Router() {
   return (
@@ -30,6 +31,7 @@ function Router() {
       <Route path="/gallery" component={Gallery} />
       <Route path="/contact" component={Contact} />
       <Route path="/join" component={Join} />
+      <Route path="/admin" component={AdminDashboard} />
       <Route component={NotFound} />
     </Switch>
   );

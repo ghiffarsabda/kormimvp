@@ -4,6 +4,7 @@ import { ArrowRight } from "lucide-react";
 import { News } from "@shared/schema";
 import { format } from "date-fns";
 import { id } from "date-fns/locale";
+import { Link } from "wouter";
 
 interface NewsCardProps {
   news: News;
@@ -44,12 +45,14 @@ const NewsCard = ({ news, isFeatured = false }: NewsCardProps) => {
             <p className="font-nunito text-gray-600 mb-4 flex-grow">
               {news.excerpt}
             </p>
-            <Button 
-              variant="link" 
-              className="p-0 font-poppins font-semibold text-[#4A90E2] hover:text-[#3a77c2] transition-colors inline-flex items-center mt-auto h-auto"
-            >
-              Baca Selengkapnya <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
+            <Link href={`/news/${news.id}`}>
+              <Button 
+                variant="link" 
+                className="p-0 font-poppins font-semibold text-[#4A90E2] hover:text-[#3a77c2] transition-colors inline-flex items-center mt-auto h-auto"
+              >
+                Baca Selengkapnya <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </Link>
           </div>
         </div>
       </Card>
@@ -72,12 +75,14 @@ const NewsCard = ({ news, isFeatured = false }: NewsCardProps) => {
         <p className="font-nunito text-gray-600 mb-4 line-clamp-3">
           {news.excerpt}
         </p>
-        <Button 
-          variant="link" 
-          className="p-0 font-poppins font-semibold text-[#4A90E2] hover:text-[#3a77c2] transition-colors inline-flex items-center h-auto"
-        >
-          Baca Selengkapnya <ArrowRight className="ml-2 h-4 w-4" />
-        </Button>
+        <Link href={`/news/${news.id}`}>
+          <Button 
+            variant="link" 
+            className="p-0 font-poppins font-semibold text-[#4A90E2] hover:text-[#3a77c2] transition-colors inline-flex items-center h-auto"
+          >
+            Baca Selengkapnya <ArrowRight className="ml-2 h-4 w-4" />
+          </Button>
+        </Link>
       </CardContent>
     </Card>
   );
