@@ -36,6 +36,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.json(organizations);
   });
   
+  app.get("/api/organizations/:id", async (req, res) => {
+    const id = parseInt(req.params.id);
+    if (isNaN(id)) {
+      return res.status(400).json({ message: "Invalid ID format" });
+    }
+    
+    const organization = await storage.getOrganization(id);
+    if (!organization) {
+      return res.status(404).json({ message: "Organization not found" });
+    }
+    
+    res.json(organization);
+  });
+  
   app.post("/api/organizations", async (req, res) => {
     try {
       const data = insertOrganizationSchema.parse(req.body);
@@ -55,6 +69,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.json(events);
   });
   
+  app.get("/api/events/:id", async (req, res) => {
+    const id = parseInt(req.params.id);
+    if (isNaN(id)) {
+      return res.status(400).json({ message: "Invalid ID format" });
+    }
+    
+    const event = await storage.getEvent(id);
+    if (!event) {
+      return res.status(404).json({ message: "Event not found" });
+    }
+    
+    res.json(event);
+  });
+  
   app.post("/api/events", async (req, res) => {
     try {
       const data = insertEventSchema.parse(req.body);
@@ -72,6 +100,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/news", async (req, res) => {
     const newsItems = await storage.getAllNews();
     res.json(newsItems);
+  });
+  
+  app.get("/api/news/:id", async (req, res) => {
+    const id = parseInt(req.params.id);
+    if (isNaN(id)) {
+      return res.status(400).json({ message: "Invalid ID format" });
+    }
+    
+    const newsItem = await storage.getNews(id);
+    if (!newsItem) {
+      return res.status(404).json({ message: "News item not found" });
+    }
+    
+    res.json(newsItem);
   });
   
   app.post("/api/news", async (req, res) => {

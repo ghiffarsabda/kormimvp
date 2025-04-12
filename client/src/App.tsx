@@ -14,6 +14,8 @@ import News from "@/pages/news";
 import Gallery from "@/pages/gallery";
 import Contact from "@/pages/contact";
 import Join from "@/pages/join";
+import OrganizationDetails from "@/pages/organization-details";
+import NewsDetails from "@/pages/news-details";
 
 function Router() {
   return (
@@ -21,8 +23,10 @@ function Router() {
       <Route path="/" component={Home} />
       <Route path="/about" component={About} />
       <Route path="/sports" component={Sports} />
+      <Route path="/sports/:id" component={OrganizationDetails} />
       <Route path="/events" component={Events} />
       <Route path="/news" component={News} />
+      <Route path="/news/:id" component={NewsDetails} />
       <Route path="/gallery" component={Gallery} />
       <Route path="/contact" component={Contact} />
       <Route path="/join" component={Join} />
