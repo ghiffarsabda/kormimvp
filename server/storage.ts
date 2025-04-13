@@ -131,6 +131,25 @@ export class MemStorage implements IStorage {
     return Array.from(this.sportCategories.values());
   }
   
+  async updateSportCategory(id: number, insertCategory: InsertSportCategory): Promise<SportCategory> {
+    const category = this.sportCategories.get(id);
+    if (!category) {
+      throw new Error(`Sport category with id ${id} not found`);
+    }
+    
+    const updatedCategory: SportCategory = { ...insertCategory, id };
+    this.sportCategories.set(id, updatedCategory);
+    return updatedCategory;
+  }
+  
+  async deleteSportCategory(id: number): Promise<void> {
+    const exists = this.sportCategories.has(id);
+    if (!exists) {
+      throw new Error(`Sport category with id ${id} not found`);
+    }
+    this.sportCategories.delete(id);
+  }
+  
   async createSportCategory(insertCategory: InsertSportCategory): Promise<SportCategory> {
     const id = this.sportCategoryCurrentId++;
     const category: SportCategory = { ...insertCategory, id };
@@ -160,6 +179,25 @@ export class MemStorage implements IStorage {
     const organization: Organization = { ...insertOrganization, id };
     this.organizations.set(id, organization);
     return organization;
+  }
+  
+  async updateOrganization(id: number, insertOrganization: InsertOrganization): Promise<Organization> {
+    const organization = this.organizations.get(id);
+    if (!organization) {
+      throw new Error(`Organization with id ${id} not found`);
+    }
+    
+    const updatedOrganization: Organization = { ...insertOrganization, id };
+    this.organizations.set(id, updatedOrganization);
+    return updatedOrganization;
+  }
+  
+  async deleteOrganization(id: number): Promise<void> {
+    const exists = this.organizations.has(id);
+    if (!exists) {
+      throw new Error(`Organization with id ${id} not found`);
+    }
+    this.organizations.delete(id);
   }
   
   // Events
@@ -406,7 +444,7 @@ export class MemStorage implements IStorage {
       },
       {
         title: "Bandung Bike Community: Pedal untuk Lingkungan",
-        date: new Date("2023-10-08"),
+        date: "2023-10-08",
         category: "Komunitas",
         content: "Bandung Bike Community bukan hanya komunitas bersepeda, tetapi juga aktif dalam kegiatan peduli lingkungan di Kota Bandung.",
         excerpt: "Bandung Bike Community bukan hanya komunitas bersepeda, tetapi juga aktif dalam kegiatan peduli lingkungan di Kota Bandung.",
@@ -414,7 +452,7 @@ export class MemStorage implements IStorage {
       },
       {
         title: "Yoga di Taman Kota: Menyatu dengan Alam",
-        date: new Date("2023-10-05"),
+        date: "2023-10-05",
         category: "Event",
         content: "Kegiatan Yoga di Taman Kota yang diinisiasi KORMI Bandung bersama komunitas yoga lokal telah menjadi rutinitas mingguan yang populer.",
         excerpt: "Kegiatan Yoga di Taman Kota yang diinisiasi KORMI Bandung bersama komunitas yoga lokal telah menjadi rutinitas mingguan yang populer.",
@@ -422,7 +460,7 @@ export class MemStorage implements IStorage {
       },
       {
         title: "5 Spot Terbaik untuk Lari Pagi di Bandung",
-        date: new Date("2023-10-01"),
+        date: "2023-10-01",
         category: "Artikel",
         content: "Bandung memiliki beragam lokasi yang cocok untuk aktivitas lari pagi. Berikut 5 spot terbaik yang direkomendasikan para pelari lokal.",
         excerpt: "Bandung memiliki beragam lokasi yang cocok untuk aktivitas lari pagi. Berikut 5 spot terbaik yang direkomendasikan para pelari lokal.",
