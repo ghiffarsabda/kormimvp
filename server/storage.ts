@@ -176,7 +176,12 @@ export class MemStorage implements IStorage {
   
   async createOrganization(insertOrganization: InsertOrganization): Promise<Organization> {
     const id = this.organizationCurrentId++;
-    const organization: Organization = { ...insertOrganization, id };
+    // Ensure isOkb is always boolean
+    const organization: Organization = { 
+      ...insertOrganization, 
+      id,
+      isOkb: insertOrganization.isOkb === undefined ? false : insertOrganization.isOkb
+    };
     this.organizations.set(id, organization);
     return organization;
   }
@@ -187,7 +192,11 @@ export class MemStorage implements IStorage {
       throw new Error(`Organization with id ${id} not found`);
     }
     
-    const updatedOrganization: Organization = { ...insertOrganization, id };
+    const updatedOrganization: Organization = { 
+      ...insertOrganization, 
+      id,
+      isOkb: insertOrganization.isOkb === undefined ? false : insertOrganization.isOkb 
+    };
     this.organizations.set(id, updatedOrganization);
     return updatedOrganization;
   }
@@ -216,6 +225,25 @@ export class MemStorage implements IStorage {
     const event: Event = { ...insertEvent, id };
     this.events.set(id, event);
     return event;
+  }
+  
+  async updateEvent(id: number, insertEvent: InsertEvent): Promise<Event> {
+    const event = this.events.get(id);
+    if (!event) {
+      throw new Error(`Event with id ${id} not found`);
+    }
+    
+    const updatedEvent: Event = { ...insertEvent, id };
+    this.events.set(id, updatedEvent);
+    return updatedEvent;
+  }
+  
+  async deleteEvent(id: number): Promise<void> {
+    const exists = this.events.has(id);
+    if (!exists) {
+      throw new Error(`Event with id ${id} not found`);
+    }
+    this.events.delete(id);
   }
   
   // News
@@ -278,6 +306,25 @@ export class MemStorage implements IStorage {
     return galleryItem;
   }
   
+  async updateGalleryItem(id: number, insertGalleryItem: InsertGalleryItem): Promise<GalleryItem> {
+    const galleryItem = this.galleryItems.get(id);
+    if (!galleryItem) {
+      throw new Error(`Gallery item with id ${id} not found`);
+    }
+    
+    const updatedGalleryItem: GalleryItem = { ...insertGalleryItem, id };
+    this.galleryItems.set(id, updatedGalleryItem);
+    return updatedGalleryItem;
+  }
+  
+  async deleteGalleryItem(id: number): Promise<void> {
+    const exists = this.galleryItems.has(id);
+    if (!exists) {
+      throw new Error(`Gallery item with id ${id} not found`);
+    }
+    this.galleryItems.delete(id);
+  }
+  
   // Messages
   async getMessage(id: number): Promise<Message | undefined> {
     return this.messages.get(id);
@@ -294,6 +341,29 @@ export class MemStorage implements IStorage {
     return message;
   }
   
+  async updateMessage(id: number, insertMessage: InsertMessage): Promise<Message> {
+    const message = this.messages.get(id);
+    if (!message) {
+      throw new Error(`Message with id ${id} not found`);
+    }
+    
+    const updatedMessage: Message = { 
+      ...insertMessage, 
+      id, 
+      createdAt: message.createdAt 
+    };
+    this.messages.set(id, updatedMessage);
+    return updatedMessage;
+  }
+  
+  async deleteMessage(id: number): Promise<void> {
+    const exists = this.messages.has(id);
+    if (!exists) {
+      throw new Error(`Message with id ${id} not found`);
+    }
+    this.messages.delete(id);
+  }
+  
   // Join Requests
   async getJoinRequest(id: number): Promise<JoinRequest | undefined> {
     return this.joinRequests.get(id);
@@ -305,7 +375,13 @@ export class MemStorage implements IStorage {
   
   async createJoinRequest(insertJoinRequest: InsertJoinRequest): Promise<JoinRequest> {
     const id = this.joinRequestCurrentId++;
-    const joinRequest: JoinRequest = { ...insertJoinRequest, id, createdAt: new Date() };
+    const joinRequest: JoinRequest = { 
+      ...insertJoinRequest, 
+      id, 
+      createdAt: new Date(),
+      // Ensure message is always string | null, not undefined
+      message: insertJoinRequest.message === undefined ? null : insertJoinRequest.message 
+    };
     this.joinRequests.set(id, joinRequest);
     return joinRequest;
   }
