@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,12 +7,24 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Organization, News, Event, GalleryItem } from "@shared/schema";
 import { Edit, Trash, Plus, Search } from "lucide-react";
 import { Link, useLocation } from "wouter";
+import { useToast } from "@/hooks/use-toast";
 import { useAdminAuth } from "@/hooks/use-auth-admin";
+import { apiRequest } from "@/lib/queryClient";
+import NewsForm from "@/components/admin/news-form";
+
+interface NewsFormState {
+  mode: 'add' | 'edit';
+  item?: News;
+}
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState("overview");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [showNewsForm, setShowNewsForm] = useState<NewsFormState | null>(null);
   const { logout } = useAdminAuth();
   const [, navigate] = useLocation();
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
   
   const handleTabChange = (value: string) => {
     setActiveTab(value);
@@ -21,6 +33,33 @@ const AdminDashboard = () => {
   const handleLogout = () => {
     logout();
     navigate("/admin/login");
+  };
+
+  // Delete news mutation
+  const deleteNewsMutation = useMutation({
+    mutationFn: async (id: number) => {
+      return await apiRequest("DELETE", `/api/news/${id}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/news'] });
+      toast({
+        title: "Berita berhasil dihapus",
+        description: "Berita telah dihapus dari database",
+      });
+    },
+    onError: (error) => {
+      toast({
+        variant: "destructive",
+        title: "Terjadi kesalahan",
+        description: `Gagal menghapus berita. ${error.message}`,
+      });
+    }
+  });
+
+  const handleDeleteNews = (id: number) => {
+    if (window.confirm("Apakah Anda yakin ingin menghapus berita ini?")) {
+      deleteNewsMutation.mutate(id);
+    }
   };
 
   const { data: organizations } = useQuery({
@@ -38,6 +77,12 @@ const AdminDashboard = () => {
   const { data: gallery } = useQuery({
     queryKey: ['/api/gallery'],
   });
+  
+  // Filter news based on search term
+  const filteredNews = news ? news.filter((item: News) => 
+    item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    item.category.toLowerCase().includes(searchTerm.toLowerCase())
+  ) : [];
 
   return (
     <div className="min-h-screen bg-[#F5F7FA]">
@@ -280,50 +325,84 @@ const AdminDashboard = () => {
                   <CardTitle>Manajemen Berita</CardTitle>
                   <CardDescription>Kelola berita dan artikel</CardDescription>
                 </div>
-                <Button className="bg-[#2E8B57] hover:bg-[#25704d]">
+                <Button 
+                  className="bg-[#2E8B57] hover:bg-[#25704d]"
+                  onClick={() => setShowNewsForm({ mode: 'add' })}
+                >
                   <Plus className="h-4 w-4 mr-2" /> Tambah Berita
                 </Button>
               </CardHeader>
               <CardContent>
-                <div className="mb-4 flex gap-2">
-                  <Input placeholder="Cari berita..." className="max-w-sm" />
-                  <Button variant="outline">
-                    <Search className="h-4 w-4 mr-2" /> Cari
-                  </Button>
-                </div>
-                
-                <div className="rounded-md border">
-                  <div className="grid grid-cols-12 gap-4 p-3 bg-muted/50 font-poppins font-semibold">
-                    <div className="col-span-1">ID</div>
-                    <div className="col-span-4">Judul</div>
-                    <div className="col-span-2">Kategori</div>
-                    <div className="col-span-3">Tanggal</div>
-                    <div className="col-span-2">Tindakan</div>
-                  </div>
-                  
-                  {news && news.length > 0 ? (
-                    news.map((item: News) => (
-                      <div key={item.id} className="grid grid-cols-12 gap-4 p-3 border-t">
-                        <div className="col-span-1">{item.id}</div>
-                        <div className="col-span-4 font-semibold">{item.title}</div>
-                        <div className="col-span-2">{item.category}</div>
-                        <div className="col-span-3">{new Date(item.date).toLocaleDateString('id-ID')}</div>
-                        <div className="col-span-2 flex gap-2">
-                          <Button variant="outline" size="icon" className="h-8 w-8">
-                            <Edit className="h-4 w-4" />
-                          </Button>
-                          <Button variant="outline" size="icon" className="h-8 w-8 text-red-500 hover:text-red-700">
-                            <Trash className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </div>
-                    ))
-                  ) : (
-                    <div className="p-4 text-center text-gray-500">
-                      Tidak ada data berita
+                {showNewsForm ? (
+                  <NewsForm 
+                    newsItem={showNewsForm.mode === 'edit' ? showNewsForm.item : undefined}
+                    onCancel={() => setShowNewsForm(null)}
+                    onSuccess={() => {
+                      setShowNewsForm(null);
+                      toast({
+                        title: showNewsForm.mode === 'edit' ? "Berita berhasil diperbarui" : "Berita berhasil ditambahkan",
+                        description: "Perubahan telah disimpan.",
+                      });
+                    }}
+                  />
+                ) : (
+                  <>
+                    <div className="mb-4 flex gap-2">
+                      <Input 
+                        placeholder="Cari berita..." 
+                        className="max-w-sm" 
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                      />
+                      <Button variant="outline">
+                        <Search className="h-4 w-4 mr-2" /> Cari
+                      </Button>
                     </div>
-                  )}
-                </div>
+                    
+                    <div className="rounded-md border">
+                      <div className="grid grid-cols-12 gap-4 p-3 bg-muted/50 font-poppins font-semibold">
+                        <div className="col-span-1">ID</div>
+                        <div className="col-span-4">Judul</div>
+                        <div className="col-span-2">Kategori</div>
+                        <div className="col-span-3">Tanggal</div>
+                        <div className="col-span-2">Tindakan</div>
+                      </div>
+                      
+                      {news && news.length > 0 ? (
+                        filteredNews.map((item: News) => (
+                          <div key={item.id} className="grid grid-cols-12 gap-4 p-3 border-t">
+                            <div className="col-span-1">{item.id}</div>
+                            <div className="col-span-4 font-semibold">{item.title}</div>
+                            <div className="col-span-2">{item.category}</div>
+                            <div className="col-span-3">{new Date(item.date).toLocaleDateString('id-ID')}</div>
+                            <div className="col-span-2 flex gap-2">
+                              <Button 
+                                variant="outline" 
+                                size="icon" 
+                                className="h-8 w-8"
+                                onClick={() => setShowNewsForm({ mode: 'edit', item })}
+                              >
+                                <Edit className="h-4 w-4" />
+                              </Button>
+                              <Button 
+                                variant="outline" 
+                                size="icon" 
+                                className="h-8 w-8 text-red-500 hover:text-red-700"
+                                onClick={() => handleDeleteNews(item.id)}
+                              >
+                                <Trash className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </div>
+                        ))
+                      ) : (
+                        <div className="p-4 text-center text-gray-500">
+                          Tidak ada data berita
+                        </div>
+                      )}
+                    </div>
+                  </>
+                )}
               </CardContent>
             </Card>
           </TabsContent>

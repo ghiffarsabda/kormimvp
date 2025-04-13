@@ -37,14 +37,25 @@ export default function NewsForm({ defaultValues, newsItem, onCancel, onSuccess 
   // Initialize the form with default values
   const form = useForm<NewsFormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: defaultValues || {
-      title: "",
-      excerpt: "",
-      content: "",
-      category: "Artikel",
-      imageUrl: "",
-      date: new Date().toISOString().split('T')[0],
-    },
+    defaultValues: defaultValues || (() => {
+      const initialValues = {
+        title: "",
+        excerpt: "",
+        content: "",
+        category: "Artikel",
+        imageUrl: "",
+        date: new Date().toISOString().split('T')[0], // String format for the date input
+      };
+      
+      if (newsItem) {
+        return {
+          ...newsItem,
+          date: new Date(newsItem.date).toISOString().split('T')[0], // Convert date to string format
+        };
+      }
+      
+      return initialValues;
+    })(),
   });
 
   // Mutation for creating or updating news

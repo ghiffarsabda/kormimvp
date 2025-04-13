@@ -37,7 +37,7 @@ export const events = pgTable("events", {
 export const news = pgTable("news", {
   id: serial("id").primaryKey(),
   title: text("title").notNull(),
-  date: timestamp("date").notNull(),
+  date: text("date").notNull(), // Store as text to handle date strings easier in forms
   category: text("category").notNull(),
   content: text("content").notNull(),
   excerpt: text("excerpt").notNull(),
