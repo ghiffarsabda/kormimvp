@@ -99,7 +99,10 @@ export const insertEventSchema = createInsertSchema(events).pick({
   imageUrl: true,
 });
 
-export const insertNewsSchema = createInsertSchema(news).pick({
+// Override the date validation to accept string instead of Date
+export const insertNewsSchema = createInsertSchema(news, {
+  date: z.string(),
+}).pick({
   title: true,
   date: true,
   category: true,
