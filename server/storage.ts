@@ -358,7 +358,7 @@ export class MemStorage implements IStorage {
     const events = [
       {
         title: "Bandung Fun Run 2023",
-        date: new Date("2023-11-25"),
+        date: "2023-11-25",
         location: "Taman Tegallega, Bandung",
         time: "07:00 - 11:00 WIB",
         fee: "Gratis",
@@ -366,7 +366,7 @@ export class MemStorage implements IStorage {
       },
       {
         title: "Bandung Sport Festival",
-        date: new Date("2023-12-10"),
+        date: "2023-12-10",
         location: "Lapangan Gasibu, Bandung",
         time: "08:00 - 17:00 WIB",
         fee: "Rp 75.000",
@@ -374,7 +374,7 @@ export class MemStorage implements IStorage {
       },
       {
         title: "Yoga di Taman",
-        date: new Date("2023-12-15"),
+        date: "2023-12-15",
         location: "Taman Film, Bandung",
         time: "06:00 - 08:00 WIB",
         fee: "Gratis",
@@ -390,7 +390,7 @@ export class MemStorage implements IStorage {
     const newsItems = [
       {
         title: "Festival Olahraga Rekreasi Kota Bandung 2023 Sukses Digelar",
-        date: new Date("2023-10-15"),
+        date: "2023-10-15",
         category: "Event",
         content: "Festival Olahraga Rekreasi Kota Bandung 2023 yang diselenggarakan KORMI Kota Bandung sukses menarik ribuan peserta dari berbagai komunitas olahraga.",
         excerpt: "Festival Olahraga Rekreasi Kota Bandung 2023 yang diselenggarakan KORMI Kota Bandung sukses menarik ribuan peserta dari berbagai komunitas olahraga.",
@@ -398,7 +398,7 @@ export class MemStorage implements IStorage {
       },
       {
         title: "5 Manfaat Olahraga Rekreasi untuk Kesehatan Mental",
-        date: new Date("2023-10-10"),
+        date: "2023-10-10",
         category: "Artikel",
         content: "Olahraga rekreasi terbukti tidak hanya bermanfaat untuk kesehatan fisik, tetapi juga memiliki dampak positif terhadap kesehatan mental.",
         excerpt: "Olahraga rekreasi terbukti tidak hanya bermanfaat untuk kesehatan fisik, tetapi juga memiliki dampak positif terhadap kesehatan mental.",

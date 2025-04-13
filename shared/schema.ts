@@ -27,7 +27,7 @@ export const organizations = pgTable("organizations", {
 export const events = pgTable("events", {
   id: serial("id").primaryKey(),
   title: text("title").notNull(),
-  date: timestamp("date").notNull(),
+  date: text("date").notNull(), // Store as text to handle date strings easier in forms
   location: text("location").notNull(),
   time: text("time").notNull(),
   fee: text("fee").notNull(),
@@ -90,7 +90,10 @@ export const insertOrganizationSchema = createInsertSchema(organizations).pick({
   icon: true,
 });
 
-export const insertEventSchema = createInsertSchema(events).pick({
+// Override the date validation to accept string instead of Date
+export const insertEventSchema = createInsertSchema(events, {
+  date: z.string(),
+}).pick({
   title: true,
   date: true,
   location: true,
