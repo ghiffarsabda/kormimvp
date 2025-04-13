@@ -128,6 +128,54 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Failed to create news item" });
     }
   });
+  
+  app.patch("/api/news/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "Invalid ID format" });
+      }
+      
+      // Check if news item exists
+      const existingNews = await storage.getNews(id);
+      if (!existingNews) {
+        return res.status(404).json({ message: "News item not found" });
+      }
+      
+      // Validate and parse the request body
+      const data = insertNewsSchema.parse(req.body);
+      
+      // Update the news item
+      const updatedNews = await storage.updateNews(id, data);
+      res.json(updatedNews);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: error.errors });
+      }
+      res.status(500).json({ message: "Failed to update news item" });
+    }
+  });
+  
+  app.delete("/api/news/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "Invalid ID format" });
+      }
+      
+      // Check if news item exists
+      const existingNews = await storage.getNews(id);
+      if (!existingNews) {
+        return res.status(404).json({ message: "News item not found" });
+      }
+      
+      // Delete the news item
+      await storage.deleteNews(id);
+      res.status(200).json({ success: true });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to delete news item" });
+    }
+  });
 
   // Gallery
   app.get("/api/gallery", async (req, res) => {

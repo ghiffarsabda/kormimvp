@@ -19,6 +19,8 @@ export interface IStorage {
   getSportCategory(id: number): Promise<SportCategory | undefined>;
   getAllSportCategories(): Promise<SportCategory[]>;
   createSportCategory(category: InsertSportCategory): Promise<SportCategory>;
+  updateSportCategory(id: number, category: InsertSportCategory): Promise<SportCategory>;
+  deleteSportCategory(id: number): Promise<void>;
   
   // Organizations
   getOrganization(id: number): Promise<Organization | undefined>;
@@ -26,16 +28,22 @@ export interface IStorage {
   getOrganizationsByType(isOkb: boolean): Promise<Organization[]>;
   getOrganizationsByCategoryId(categoryId: number): Promise<Organization[]>;
   createOrganization(organization: InsertOrganization): Promise<Organization>;
+  updateOrganization(id: number, organization: InsertOrganization): Promise<Organization>;
+  deleteOrganization(id: number): Promise<void>;
   
   // Events
   getEvent(id: number): Promise<Event | undefined>;
   getAllEvents(): Promise<Event[]>;
   createEvent(event: InsertEvent): Promise<Event>;
+  updateEvent(id: number, event: InsertEvent): Promise<Event>;
+  deleteEvent(id: number): Promise<void>;
   
   // News
   getNews(id: number): Promise<News | undefined>;
   getAllNews(): Promise<News[]>;
   createNews(newsItem: InsertNews): Promise<News>;
+  updateNews(id: number, newsItem: InsertNews): Promise<News>;
+  deleteNews(id: number): Promise<void>;
   
   // Gallery
   getGalleryItem(id: number): Promise<GalleryItem | undefined>;
@@ -188,6 +196,26 @@ export class MemStorage implements IStorage {
     const newsItem: News = { ...insertNews, id };
     this.newsItems.set(id, newsItem);
     return newsItem;
+  }
+  
+  async updateNews(id: number, newsItem: InsertNews): Promise<News> {
+    const existingNews = await this.getNews(id);
+    if (!existingNews) {
+      throw new Error(`News with id ${id} not found`);
+    }
+    
+    const updatedNews: News = { ...newsItem, id };
+    this.newsItems.set(id, updatedNews);
+    return updatedNews;
+  }
+  
+  async deleteNews(id: number): Promise<void> {
+    const existingNews = await this.getNews(id);
+    if (!existingNews) {
+      throw new Error(`News with id ${id} not found`);
+    }
+    
+    this.newsItems.delete(id);
   }
   
   // Gallery
