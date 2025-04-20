@@ -386,6 +386,31 @@ export class MemStorage implements IStorage {
     return joinRequest;
   }
   
+  async updateJoinRequest(id: number, insertJoinRequest: InsertJoinRequest): Promise<JoinRequest> {
+    const joinRequest = this.joinRequests.get(id);
+    if (!joinRequest) {
+      throw new Error(`Join request with id ${id} not found`);
+    }
+    
+    const updatedJoinRequest: JoinRequest = { 
+      ...insertJoinRequest, 
+      id, 
+      createdAt: joinRequest.createdAt,
+      // Ensure message is always string | null, not undefined
+      message: insertJoinRequest.message === undefined ? null : insertJoinRequest.message 
+    };
+    this.joinRequests.set(id, updatedJoinRequest);
+    return updatedJoinRequest;
+  }
+  
+  async deleteJoinRequest(id: number): Promise<void> {
+    const exists = this.joinRequests.has(id);
+    if (!exists) {
+      throw new Error(`Join request with id ${id} not found`);
+    }
+    this.joinRequests.delete(id);
+  }
+  
   // Initialize sample data
   async initializeData(): Promise<void> {
     // Sport Categories
